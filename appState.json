@@ -1,0 +1,119 @@
+{
+  "EDITOR_STATE": {
+    "allProjectFiles": {
+      "3aa8e9cb-e1c4-4ebd-b3d7-f6ed908e367c": {
+        "id": "3aa8e9cb-e1c4-4ebd-b3d7-f6ed908e367c",
+        "parent": null,
+        "name": "serverless_messages",
+        "type": "DIRECTORY",
+        "isDirectory": true,
+        "children": [
+          "d2bcf6e5-bb94-4ef4-aaa3-f250d608a1e7"
+        ],
+        "isRemovable": false,
+        "filePath": "serverless_messages"
+      },
+      "d2bcf6e5-bb94-4ef4-aaa3-f250d608a1e7": {
+        "id": "d2bcf6e5-bb94-4ef4-aaa3-f250d608a1e7",
+        "parent": "3aa8e9cb-e1c4-4ebd-b3d7-f6ed908e367c",
+        "name": "lambda.js",
+        "type": "JS_LAMBDA",
+        "isDirectory": false,
+        "children": [],
+        "isRemovable": true,
+        "filePath": "serverless_messages/lambda.js",
+        "code": "let AWS = require('aws-sdk');\nconst sns = new AWS.SNS();\n\nexports.handler = function (event, context, callback) {\n\n    let receiver = event['receiver'];\n    let sender = event['sender'];\n    let message = event['message'];\n\n    console.log(\"Sending message\", message, \"to receiver\", receiver);\n\n    sns.publish({\n        Message: message,\n        PhoneNumber: receiver,\n        MessageAttributes: {\n            'AWS.SNS.SMS.SMSType': {\n                DataType: \"String\",\n                StringValue: \"Promotional\"\n            },\n            'AWS.SNS.SMS.SenderID': {\n                DataType: \"String\",\n                StringValue: sender\n            }\n        }\n    }).promise()\n        .then(data => {\n            console.log(\"Sent message to\", receiver);\n\t\t\tcallback(null, data);\n        })\n        .catch(err => {\n            console.log(\"Sending failed\", err);\n\t\t\tcallback(err);\n        });\n\n}",
+        "config": {
+          "runtime": "nodejs8.10",
+          "handler": "handler",
+          "timeout": 60,
+          "memory": 128,
+          "layers": []
+        },
+        "triggers": [
+          {
+            "resourceName": "apigusEast1SMSGatewaysendSMSpost",
+            "config": {}
+          }
+        ]
+      }
+    },
+    "rootNode": "3aa8e9cb-e1c4-4ebd-b3d7-f6ed908e367c",
+    "openFiles": [
+      "d2bcf6e5-bb94-4ef4-aaa3-f250d608a1e7"
+    ],
+    "currentFileId": "d2bcf6e5-bb94-4ef4-aaa3-f250d608a1e7",
+    "resources": {
+      "apigusEast1SMSGatewaysendSMSpost": {
+        "name": "apigusEast1SMSGatewaysendSMSpost",
+        "type": "API_GATEWAY",
+        "config": {
+          "selectedRegion": "us-east-1",
+          "apiMode": 0,
+          "apiName": "SMSGateway",
+          "endpointType": "EDGE",
+          "resourceMode": 0,
+          "resourceName": "sendSMS",
+          "resourcePath": "/sendSMS",
+          "restMethod": "POST",
+          "proxyIntegration": false,
+          "enableCORS": false,
+          "stageMode": 0,
+          "stageName": "prod",
+          "mode": 0
+        }
+      },
+      "snsDirectSMSResource": {
+        "name": "snsDirectSMSResource",
+        "type": "SNS",
+        "config": {
+          "snsType": 1,
+          "numbers": [
+            "@{receiver}"
+          ]
+        }
+      }
+    },
+    "customTemplate": {
+      "dialect": null,
+      "definitions": null
+    },
+    "envVariables": [
+      {
+        "lambdaId": "all",
+        "varKey": "SIGMA_AWS_ACC_ID",
+        "varValue": null,
+        "shouldPersist": false,
+        "displayOnly": false,
+        "editable": false
+      }
+    ],
+    "packageJSON": {
+      "dependencies": {
+        "aws-sdk": {
+          "name": "aws-sdk",
+          "language": "javascript",
+          "version": "2.176.0",
+          "dev": true,
+          "notRemovable": false
+        }
+      }
+    }
+  },
+  "PROJECT_META": {
+    "projectName": "serverless_messages",
+    "projectDescription": "A project to send SMS messages through a API endpoint",
+    "projectVersion": "1.0.0",
+    "projectRegion": "us-east-1",
+    "platform": "AWS",
+    "platformRegions": {},
+    "lastSave": 1578242929748
+  },
+  "VCS_STATE": {
+    "provider": "GitHub",
+    "repo": {
+      "name": "serverless_messages",
+      "url": "https://github.com/jkmurphy123/serverless_messages"
+    }
+  }
+}
